@@ -4,6 +4,7 @@ import random
 import time
 from datetime import datetime
 from threading import Thread
+import os  # Import os to get the PORT environment variable
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -33,3 +34,7 @@ recent_readings = [
 # Run emit_data in a background thread
 thread = Thread(target=emit_data)
 thread.start()
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))  # Use PORT environment variable or default to 5000
+    socketio.run(app, host='0.0.0.0', port=port, allow_unsafe_werkzeug=True)

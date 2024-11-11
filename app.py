@@ -19,18 +19,17 @@ def emit_data():
         # Example data to emit
         data = {
             'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
-            'flow_rate': round(random.uniform(0.0,100.0),2)  # Example flow rate value
+            'flow_rate': round(random.uniform(0.0, 100.0), 2)  # Example flow rate value
         }
         print("Emitting data:", data)  # Server log for debugging
         socketio.emit('new_data', data)
         time.sleep(60)  # Adjust frequency as needed
+
 recent_readings = [
-        {"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "flow_rate": round(random.uniform(0.0, 100.0), 2)}
-        for _ in range(10)  # Generating 10 random readings
-    ]
+    {"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "flow_rate": round(random.uniform(0.0, 100.0), 2)}
+    for _ in range(10)  # Generating 10 random readings
+]
+
 # Run emit_data in a background thread
 thread = Thread(target=emit_data)
 thread.start()
-
-if __name__ == '__main__':
-    socketio.run(app, host='127.0.0.1', port=5000)

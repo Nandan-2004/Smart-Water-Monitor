@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    color: #0077cc;
+}
+
+#flow-rate {
+    font-size: 2em;
+    color: #333;
+}
+
+table {
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #0077cc;
+    padding: 10px;
+}
+
+th {
+    background-color: #0077cc;
+    color: white;
+}

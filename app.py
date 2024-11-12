@@ -1,12 +1,14 @@
+from flask import Flask, jsonify
+import random
+from datetime import datetime
+
+app = Flask(__name__)
+
 @app.route('/get_data')
 def get_data():
     try:
-        # Fetch data from the ESP32 (IoT device)
-        response = requests.get(ESP32_URL)
-        data = response.json()
-
-        # Extract flow rate and timestamp
-        flow_rate = data['flow_rate']
+        # Generate a random flow rate for testing
+        flow_rate = round(random.uniform(0.5, 100.0), 2)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # Fine and reward logic
@@ -26,4 +28,7 @@ def get_data():
         data = {'timestamp': timestamp, 'flow_rate': flow_rate, 'fine': fine, 'reward': reward}
         return jsonify(data)
     except Exception as e:
-        return jsonify({"error": "Unable to fetch data from IoT device"}), 500
+        return jsonify({"error": "Unable to generate data"}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,21 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Define water usage thresholds
-    const highUsageThreshold = 80.0;  // Set the high usage threshold
-    const lowUsageThreshold = 10.0;   // Set the low usage threshold
+    const highUsageThreshold = 80.0;  // High usage threshold
+    const lowUsageThreshold = 10.0;   // Low usage threshold
 
     // Initialize the virtual wallet to store the total fine and reward
     let totalFine = 0;
     let totalReward = 0;
 
     // Get the current month and year at page load
-    let currentMonth = new Date().getMonth(); // Get the current month (0-based index)
-    let currentYear = new Date().getFullYear(); // Get the current year
-    let firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // Get the first day of the current month
+    let currentMonth = new Date().getMonth();  // 0-based month index
+    let currentYear = new Date().getFullYear(); // Current year
+    let firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // First day of current month
 
     // Function to reset fine and reward at the start of a new month
     function resetMonthlyValues() {
-        const today = new Date(); // Get today's date
-        const firstDayOfNextMonth = new Date(currentYear, currentMonth + 1, 1); // Calculate the first day of next month
+        const today = new Date();
+        const firstDayOfNextMonth = new Date(currentYear, currentMonth + 1, 1); // First day of next month
 
         // If today is the first day of a new month, reset the fine and reward values
         if (today >= firstDayOfNextMonth) {
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const response = await fetch('/get_data');
             const data = await response.json();
-
             console.log("Received data:", data);  // Log for debugging
 
             // Update the live flow rate display
@@ -59,17 +58,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check for high or low water usage and update fine and reward
             if (data.flow_rate > highUsageThreshold) {
                 alert(`High Water Usage Alert - Your usage is too high! Current flow rate is ${data.flow_rate} L/min`);
-                const fineAmount = (data.flow_rate - highUsageThreshold) * 10; // Example fine calculation
-                totalFine += fineAmount; // Add the fine to the wallet
+                const fineAmount = (data.flow_rate - highUsageThreshold) * 10;  // Example fine calculation
+                totalFine += fineAmount;  // Add the fine to the wallet
             } else if (data.flow_rate < lowUsageThreshold) {
                 alert(`Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is ${data.flow_rate} L/min`);
-                const rewardAmount = (lowUsageThreshold - data.flow_rate) * 5; // Example reward calculation
-                totalReward += rewardAmount; // Add the reward to the wallet
+                const rewardAmount = (lowUsageThreshold - data.flow_rate) * 5;  // Example reward calculation
+                totalReward += rewardAmount;  // Add the reward to the wallet
             }
 
             // Update the fine and reward values in the display
-            document.getElementById('fine').textContent = totalFine.toFixed(2); // Display total fine
-            document.getElementById('reward').textContent = totalReward.toFixed(2); // Display total reward
+            document.getElementById('fine').textContent = totalFine.toFixed(2);  // Display total fine
+            document.getElementById('reward').textContent = totalReward.toFixed(2);  // Display total reward
 
             // Display the total wallet balance
             document.getElementById('wallet').textContent = `Wallet Balance: Rs ${totalFine.toFixed(2)} Fine, ${totalReward.toFixed(2)} L Reward`;

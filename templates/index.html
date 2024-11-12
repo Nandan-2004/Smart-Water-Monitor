@@ -43,3 +43,77 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulated Water Flow Monitor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Simulated Water Flow Monitor</h1>
+    <div id="data-display">
+        <h3>Latest Water Flow Data</h3>
+        <p><strong>Timestamp:</strong> <span id="timestamp">Waiting for data...</span></p>
+        <p><strong>Flow Rate (L/min):</strong> <span id="flow-rate">Waiting for data...</span></p>
+    </div>
+    
+    <div>
+        <h3>Recent Readings</h3>
+        <table id="data-table" border="1">
+            <tr>
+                <th>Timestamp</th>
+                <th>Flow Rate (L/min)</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define water usage thresholds
+            const highUsageThreshold = 80.0;  // Set the high usage threshold
+            const lowUsageThreshold = 10.0;   // Set the low usage threshold
+
+            // Function to fetch data from the server
+            async function fetchData() {
+                try {
+                    const response = await fetch('/get_data');
+                    const data = await response.json();
+
+                    console.log("Received data:", data);  // Log for debugging
+
+                    // Update the live flow rate display
+                    document.getElementById('flow-rate').textContent = ${data.flow_rate} L/min;
+
+                    // Update the timestamp
+                    document.getElementById('timestamp').textContent = data.timestamp;
+
+                    // Add a new row to the recent readings table
+                    const table = document.getElementById('data-table');
+                    const newRow = table.insertRow(1); // Insert at the top, below headers
+                    const timestampCell = newRow.insertCell(0);
+                    const flowRateCell = newRow.insertCell(1);
+
+                    // Populate cells with data
+                    timestampCell.textContent = data.timestamp;
+                    flowRateCell.textContent = ${data.flow_rate} L/min;
+
+                    // Check for high or low water usage
+                    if (data.flow_rate > highUsageThreshold) {
+                        alert("High Water Usage Alert - Your usage is too high! Current flow rate is " + data.flow_rate + " L/min");
+                    } else if (data.flow_rate < lowUsageThreshold) {
+                        alert("Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is " + data.flow_rate + " L/min");
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            }
+
+            // Poll for data every 5 seconds
+            setInterval(fetchData, 5000);
+            fetchData(); // Fetch data immediately on page load
+        });
+    </script>
+</body>
+</html>

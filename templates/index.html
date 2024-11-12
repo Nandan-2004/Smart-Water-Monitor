@@ -3,83 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulated Water Flow Monitor</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Water Flow Monitor</title>
 </head>
 <body>
-    <h1>Simulated Water Flow Monitor</h1>
+    <h1>Water Flow Monitor</h1>
     <div id="data-display">
         <h3>Latest Water Flow Data</h3>
         <p><strong>Timestamp:</strong> <span id="timestamp">Waiting for data...</span></p>
         <p><strong>Flow Rate (L/min):</strong> <span id="flow-rate">Waiting for data...</span></p>
-    </div>
-
-    <div>
-        <h3>Recent Readings</h3>
-        <table id="data-table" border="1">
-            <tr>
-                <th>Timestamp</th>
-                <th>Flow Rate (L/min)</th>
-            </tr>
-        </table>
-    </div>
-
-    <!-- New Dashboard for Penalty and Reward -->
-    <div id="penalty-reward-dashboard">
-        <h3>Water Usage Feedback</h3>
-        <p><strong>Usage Status:</strong> <span id="usage-status">Waiting for data...</span></p>
         <p><strong>Fine (if over usage):</strong> <span id="fine">0</span> Rs/L</p>
         <p><strong>Reward (if low usage):</strong> <span id="reward">0</span> L</p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const highUsageThreshold = 80.0;  // High usage threshold
-            const lowUsageThreshold = 10.0;   // Low usage threshold
-            const fineRate = 5.0;  // Fine rate for high usage
-            const rewardAmount = 2;  // Reward for low usage
-
-            // Fetch data from the Flask server
             async function fetchData() {
                 try {
                     const response = await fetch('/get_data');
                     const data = await response.json();
 
+                    // Update the live flow rate display
                     document.getElementById('flow-rate').textContent = `${data.flow_rate} L/min`;
+
+                    // Update the timestamp
                     document.getElementById('timestamp').textContent = data.timestamp;
 
-                    const table = document.getElementById('data-table');
-                    const newRow = table.insertRow(1); // Insert at the top
-                    const timestampCell = newRow.insertCell(0);
-                    const flowRateCell = newRow.insertCell(1);
-
-                    timestampCell.textContent = data.timestamp;
-                    flowRateCell.textContent = `${data.flow_rate} L/min`;
-
-                    // Apply penalty or reward
-                    if (data.flow_rate > highUsageThreshold) {
-                        document.getElementById('usage-status').textContent = "High Usage - Fine Applied";
-                        const fine = (data.flow_rate - highUsageThreshold) * fineRate;
-                        document.getElementById('fine').textContent = fine.toFixed(2);
-                        document.getElementById('reward').textContent = '0';
-                    } else if (data.flow_rate < lowUsageThreshold) {
-                        document.getElementById('usage-status').textContent = "Low Usage - Reward Applied";
-                        document.getElementById('reward').textContent = rewardAmount;
-                        document.getElementById('fine').textContent = '0';
-                    } else {
-                        document.getElementById('usage-status').textContent = "Normal Usage";
-                        document.getElementById('fine').textContent = '0';
-                        document.getElementById('reward').textContent = '0';
-                    }
-
+                    // Fine and reward logic display
+                    document.getElementById('fine').textContent = data.fine.toFixed(2);
+                    document.getElementById('reward').textContent = data.reward;
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }
             }
 
-            // Poll every 60 seconds
+            // Fetch data immediately on page load and set interval to fetch every 60 seconds
+            fetchData();
             setInterval(fetchData, 60000);
-            fetchData();  // Fetch data immediately when the page loads
         });
     </script>
 </body>

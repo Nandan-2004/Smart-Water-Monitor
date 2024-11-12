@@ -4,10 +4,14 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return "Welcome to the Water Flow Monitor API!"
+
 @app.route('/get_data')
 def get_data():
     try:
-        # Generate a random flow rate for testing
+        # Generate random flow rate for now (simulating data)
         flow_rate = round(random.uniform(0.5, 100.0), 2)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

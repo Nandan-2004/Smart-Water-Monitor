@@ -93,11 +93,11 @@
                     // Check for high or low water usage and update fine and reward
                     if (data.flow_rate > highUsageThreshold) {
                         alert(`High Water Usage Alert - Your usage is too high! Current flow rate is ${data.flow_rate} L/min`);
-                        const fineAmount = (data.flow_rate - highUsageThreshold) * 10; // Example fine calculation
+                        const fineAmount = (data.flow_rate - highUsageThreshold) * 2; // Example fine calculation
                         totalFine += fineAmount; // Add the fine to the wallet
                     } else if (data.flow_rate < lowUsageThreshold) {
                         alert(`Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is ${data.flow_rate} L/min`);
-                        const rewardAmount = (lowUsageThreshold - data.flow_rate) * 5; // Example reward calculation
+                        const rewardAmount = (lowUsageThreshold - data.flow_rate) * 3; // Example reward calculation
                         totalReward += rewardAmount; // Add the reward to the wallet
                     }
 
@@ -114,7 +114,7 @@
             }
 
             // Poll for data every 5 seconds
-            setInterval(fetchData, 60000);
+            setInterval(fetchData, 5000);
             fetchData(); // Fetch data immediately on page load
         });
     </script>

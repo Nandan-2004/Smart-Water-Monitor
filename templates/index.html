@@ -34,37 +34,29 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Define water usage thresholds
-            const highUsageThreshold = 80.0;  // Set the high usage threshold
-            const lowUsageThreshold = 10.0;   // Set the low usage threshold
-            const fineRate = 5.0;  // Fine rate per liter for excessive use
-            const rewardAmount = 2;  // Reward for low usage, extra water in Liters
+            const highUsageThreshold = 80.0;  // High usage threshold
+            const lowUsageThreshold = 10.0;   // Low usage threshold
+            const fineRate = 5.0;  // Fine rate for high usage
+            const rewardAmount = 2;  // Reward for low usage
 
-            // Function to fetch data from the server
+            // Fetch data from the Flask server
             async function fetchData() {
                 try {
                     const response = await fetch('/get_data');
                     const data = await response.json();
 
-                    console.log("Received data:", data);  // Log for debugging
-
-                    // Update the live flow rate display
                     document.getElementById('flow-rate').textContent = `${data.flow_rate} L/min`;
-
-                    // Update the timestamp
                     document.getElementById('timestamp').textContent = data.timestamp;
 
-                    // Add a new row to the recent readings table
                     const table = document.getElementById('data-table');
-                    const newRow = table.insertRow(1); // Insert at the top, below headers
+                    const newRow = table.insertRow(1); // Insert at the top
                     const timestampCell = newRow.insertCell(0);
                     const flowRateCell = newRow.insertCell(1);
 
-                    // Populate cells with data
                     timestampCell.textContent = data.timestamp;
                     flowRateCell.textContent = `${data.flow_rate} L/min`;
 
-                    // Check for high or low water usage and update penalty/reward
+                    // Apply penalty or reward
                     if (data.flow_rate > highUsageThreshold) {
                         document.getElementById('usage-status').textContent = "High Usage - Fine Applied";
                         const fine = (data.flow_rate - highUsageThreshold) * fineRate;
@@ -72,8 +64,7 @@
                         document.getElementById('reward').textContent = '0';
                     } else if (data.flow_rate < lowUsageThreshold) {
                         document.getElementById('usage-status').textContent = "Low Usage - Reward Applied";
-                        const reward = rewardAmount;
-                        document.getElementById('reward').textContent = reward;
+                        document.getElementById('reward').textContent = rewardAmount;
                         document.getElementById('fine').textContent = '0';
                     } else {
                         document.getElementById('usage-status').textContent = "Normal Usage";
@@ -86,9 +77,9 @@
                 }
             }
 
-            // Poll for data every 60 seconds
+            // Poll every 60 seconds
             setInterval(fetchData, 60000);
-            fetchData(); // Fetch data immediately on page load
+            fetchData();  // Fetch data immediately when the page loads
         });
     </script>
 </body>

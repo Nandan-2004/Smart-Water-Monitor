@@ -3,51 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Water Flow Monitor</title>
-</head>
-<body>
-    <h1>Water Flow Monitor</h1>
-    <div id="data-display">
-        <h3>Latest Water Flow Data</h3>
-        <p><strong>Timestamp:</strong> <span id="timestamp">Waiting for data...</span></p>
-        <p><strong>Flow Rate (L/min):</strong> <span id="flow-rate">Waiting for data...</span></p>
-        <p><strong>Fine (if over usage):</strong> <span id="fine">0</span> Rs/L</p>
-        <p><strong>Reward (if low usage):</strong> <span id="reward">0</span> L</p>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            async function fetchData() {
-                try {
-                    const response = await fetch('/get_data');
-                    const data = await response.json();
-
-                    // Update the live flow rate display
-                    document.getElementById('flow-rate').textContent = `${data.flow_rate} L/min`;
-
-                    // Update the timestamp
-                    document.getElementById('timestamp').textContent = data.timestamp;
-
-                    // Fine and reward logic display
-                    document.getElementById('fine').textContent = data.fine.toFixed(2);
-                    document.getElementById('reward').textContent = data.reward;
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                }
-            }
-
-            // Fetch data immediately on page load and set interval to fetch every 60 seconds
-            fetchData();
-            setInterval(fetchData, 60000);
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulated Water Flow Monitor</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -57,6 +12,8 @@
         <h3>Latest Water Flow Data</h3>
         <p><strong>Timestamp:</strong> <span id="timestamp">Waiting for data...</span></p>
         <p><strong>Flow Rate (L/min):</strong> <span id="flow-rate">Waiting for data...</span></p>
+        <p><strong>Fine (if over usage):</strong> <span id="fine">0</span> Rs/L</p>
+        <p><strong>Reward (if low usage):</strong> <span id="reward">0</span> L</p>
     </div>
     
     <div>
@@ -72,8 +29,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Define water usage thresholds
-            const highUsageThreshold = 80.0;  // Set the high usage threshold
-            const lowUsageThreshold = 10.0;   // Set the low usage threshold
+            const highUsageThreshold = 80.0;
+            const lowUsageThreshold = 10.0;
 
             // Function to fetch data from the server
             async function fetchData() {
@@ -81,23 +38,25 @@
                     const response = await fetch('/get_data');
                     const data = await response.json();
 
-                    console.log("Received data:", data);  // Log for debugging
-
                     // Update the live flow rate display
-                    document.getElementById('flow-rate').textContent = ${data.flow_rate} L/min;
+                    document.getElementById('flow-rate').textContent = `${data.flow_rate} L/min`;
 
                     // Update the timestamp
                     document.getElementById('timestamp').textContent = data.timestamp;
 
+                    // Update fine and reward
+                    document.getElementById('fine').textContent = data.fine.toFixed(2);
+                    document.getElementById('reward').textContent = data.reward.toFixed(2);
+
                     // Add a new row to the recent readings table
                     const table = document.getElementById('data-table');
-                    const newRow = table.insertRow(1); // Insert at the top, below headers
+                    const newRow = table.insertRow(1);  // Insert at the top, below headers
                     const timestampCell = newRow.insertCell(0);
                     const flowRateCell = newRow.insertCell(1);
 
                     // Populate cells with data
                     timestampCell.textContent = data.timestamp;
-                    flowRateCell.textContent = ${data.flow_rate} L/min;
+                    flowRateCell.textContent = `${data.flow_rate} L/min`;
 
                     // Check for high or low water usage
                     if (data.flow_rate > highUsageThreshold) {
@@ -112,7 +71,7 @@
 
             // Poll for data every 5 seconds
             setInterval(fetchData, 5000);
-            fetchData(); // Fetch data immediately on page load
+            fetchData();  // Fetch data immediately on page load
         });
     </script>
 </body>

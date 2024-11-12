@@ -6,6 +6,7 @@ body {
 
 h1 {
     color: #0077cc;
+    margin-bottom: 20px;
 }
 
 #flow-rate {
@@ -39,15 +40,28 @@ h1 {
     color: #0077cc;
 }
 
+/* Fine and Reward Visual Styling */
+#fine {
+    color: #e74c3c;  /* Red for fine */
+    font-weight: bold;
+}
+
+#reward {
+    color: #2ecc71;  /* Green for reward */
+    font-weight: bold;
+}
+
 /* Table Styling */
 table {
     margin: 20px auto;
     border-collapse: collapse;
+    width: 90%;
 }
 
 table, th, td {
     border: 1px solid #0077cc;
     padding: 10px;
+    text-align: center;
 }
 
 th {

@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to fetch data from the server
     async function fetchData() {
         try {
-            resetMonthlyValues(); // Check if it's a new month and reset values
+            // Reset monthly fine and reward values if it's a new month
+            resetMonthlyValues();
 
             const response = await fetch('/get_data');
             const data = await response.json();

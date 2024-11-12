@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulated Water Flow Monitor</title>
-    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -31,36 +30,44 @@
             const highUsageThreshold = 80.0;  // Set the high usage threshold
             const lowUsageThreshold = 10.0;   // Set the low usage threshold
 
-            // Connect to the Socket.IO server
-            const socket = io.connect('http://127.0.0.1:5000');
+            // Function to fetch data from the server
+            async function fetchData() {
+                try {
+                    const response = await fetch('/get_data');
+                    const data = await response.json();
 
-            // Listen for the 'new_data' event from the server
-            socket.on('new_data', function(data) {
-                console.log("Received data:", data);  // Log for debugging
+                    console.log("Received data:", data);  // Log for debugging
 
-                // Update the live flow rate display
-                document.getElementById('flow-rate').textContent = `${data.flow_rate} L/min`;
+                    // Update the live flow rate display
+                    document.getElementById('flow-rate').textContent = `${data.flow_rate} L/min`;
 
-                // Update the timestamp
-                document.getElementById('timestamp').textContent = data.timestamp;
+                    // Update the timestamp
+                    document.getElementById('timestamp').textContent = data.timestamp;
 
-                // Add a new row to the recent readings table
-                const table = document.getElementById('data-table');
-                const newRow = table.insertRow(1); // Insert at the top, below headers
-                const timestampCell = newRow.insertCell(0);
-                const flowRateCell = newRow.insertCell(1);
+                    // Add a new row to the recent readings table
+                    const table = document.getElementById('data-table');
+                    const newRow = table.insertRow(1); // Insert at the top, below headers
+                    const timestampCell = newRow.insertCell(0);
+                    const flowRateCell = newRow.insertCell(1);
 
-                // Populate cells with data
-                timestampCell.textContent = data.timestamp;
-                flowRateCell.textContent = `${data.flow_rate} L/min`;
+                    // Populate cells with data
+                    timestampCell.textContent = data.timestamp;
+                    flowRateCell.textContent = `${data.flow_rate} L/min`;
 
-                // Check for high or low water usage
-                if (data.flow_rate > highUsageThreshold) {
-                    alert("High Water Usage Alert- Your usage is too high!!: Current flow rate is " + data.flow_rate + " L/min");
-                } else if (data.flow_rate < lowUsageThreshold) {
-                    alert("Low Water Usage Alert- Your usage is too less,Keep it u Current flow rate is " + data.flow_rate + " L/min");
+                    // Check for high or low water usage
+                    if (data.flow_rate > highUsageThreshold) {
+                        alert("High Water Usage Alert - Your usage is too high! Current flow rate is " + data.flow_rate + " L/min");
+                    } else if (data.flow_rate < lowUsageThreshold) {
+                        alert("Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is " + data.flow_rate + " L/min");
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
                 }
-            });
+            }
+
+            // Poll for data every 5 seconds
+            setInterval(fetchData, 5000);
+            fetchData(); // Fetch data immediately on page load
         });
     </script>
 </body>

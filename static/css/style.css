@@ -1,3 +1,4 @@
+/* Basic Styling */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -12,6 +13,18 @@ h1 {
     color: #333;
 }
 
+/* Data Display Section Styling */
+#data-display {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* Table Styling */
 table {
     margin: 20px auto;
     border-collapse: collapse;
@@ -25,4 +38,22 @@ table, th, td {
 th {
     background-color: #0077cc;
     color: white;
+}
+
+/* Hover Effect for Table Rows */
+tr:hover {
+    background-color: #e0f0ff; /* Light blue background on hover */
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+    #flow-rate {
+        font-size: 1.5em;
+    }
+    table, th, td {
+        padding: 5px;
+    }
 }

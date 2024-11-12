@@ -13,6 +13,5 @@ packaging==24.2
 python-engineio==4.10.1
 python-socketio==5.11.4
 simple-websocket==1.1.0
-waitress==3.0.1
 Werkzeug==2.0.3
 wsproto==1.2.0

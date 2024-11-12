@@ -3,26 +3,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const highUsageThreshold = 80.0;  // Set the high usage threshold
     const lowUsageThreshold = 10.0;   // Set the low usage threshold
 
-    // Store the fine and reward values persistently
-    let fine = 0;
-    let reward = 0;
+    // Initialize the virtual wallet to store the total fine and reward
+    let totalFine = 0;
+    let totalReward = 0;
 
     // Get the current month and year at page load
     let currentMonth = new Date().getMonth(); // Get the current month (0-based index)
     let currentYear = new Date().getFullYear(); // Get the current year
+    let firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // Get the first day of the current month
 
     // Function to reset fine and reward at the start of a new month
     function resetMonthlyValues() {
-        const newMonth = new Date().getMonth(); // Get the new current month
-        const newYear = new Date().getFullYear(); // Get the new current year
+        const today = new Date(); // Get today's date
+        const firstDayOfNextMonth = new Date(currentYear, currentMonth + 1, 1); // Calculate the first day of next month
 
-        // Check if the year or month has changed
-        if (newMonth !== currentMonth || newYear !== currentYear) {
-            fine = 0;
-            reward = 0;
-            currentMonth = newMonth; // Update the current month
-            currentYear = newYear; // Update the current year
-            console.log("New month started! Fine and reward values reset.");
+        // If today is the first day of a new month, reset the fine and reward values
+        if (today >= firstDayOfNextMonth) {
+            totalFine = 0;
+            totalReward = 0;
+            // Update the current month and year
+            currentMonth = today.getMonth();
+            currentYear = today.getFullYear();
+            firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // Update the first day of the current month
+            console.log("New month started! Wallet values reset.");
         }
     }
 
@@ -56,15 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check for high or low water usage and update fine and reward
             if (data.flow_rate > highUsageThreshold) {
                 alert(`High Water Usage Alert - Your usage is too high! Current flow rate is ${data.flow_rate} L/min`);
-                fine = (data.flow_rate - highUsageThreshold) * 10; // Example fine calculation
+                const fineAmount = (data.flow_rate - highUsageThreshold) * 10; // Example fine calculation
+                totalFine += fineAmount; // Add the fine to the wallet
             } else if (data.flow_rate < lowUsageThreshold) {
                 alert(`Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is ${data.flow_rate} L/min`);
-                reward = (lowUsageThreshold - data.flow_rate) * 5; // Example reward calculation
+                const rewardAmount = (lowUsageThreshold - data.flow_rate) * 5; // Example reward calculation
+                totalReward += rewardAmount; // Add the reward to the wallet
             }
 
             // Update the fine and reward values in the display
-            document.getElementById('fine').textContent = fine.toFixed(2); // Display fine
-            document.getElementById('reward').textContent = reward.toFixed(2); // Display reward
+            document.getElementById('fine').textContent = totalFine.toFixed(2); // Display total fine
+            document.getElementById('reward').textContent = totalReward.toFixed(2); // Display total reward
+
+            // Display the total wallet balance
+            document.getElementById('wallet').textContent = `Wallet Balance: Rs ${totalFine.toFixed(2)} Fine, ${totalReward.toFixed(2)} L Reward`;
 
         } catch (error) {
             console.error("Error fetching data:", error);

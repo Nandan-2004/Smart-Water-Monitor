@@ -7,16 +7,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let fine = 0;
     let reward = 0;
 
-    // Get the current month at page load
+    // Get the current month and year at page load
     let currentMonth = new Date().getMonth(); // Get the current month (0-based index)
+    let currentYear = new Date().getFullYear(); // Get the current year
 
     // Function to reset fine and reward at the start of a new month
     function resetMonthlyValues() {
         const newMonth = new Date().getMonth(); // Get the new current month
-        if (newMonth !== currentMonth) {
+        const newYear = new Date().getFullYear(); // Get the new current year
+
+        // Check if the year or month has changed
+        if (newMonth !== currentMonth || newYear !== currentYear) {
             fine = 0;
             reward = 0;
             currentMonth = newMonth; // Update the current month
+            currentYear = newYear; // Update the current year
             console.log("New month started! Fine and reward values reset.");
         }
     }

@@ -24,6 +24,21 @@ h1 {
     border-radius: 8px;
 }
 
+/* New Dashboard Styling */
+#penalty-reward-dashboard {
+    margin-top: 30px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 80%;
+    max-width: 400px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+#penalty-reward-dashboard h3 {
+    color: #0077cc;
+}
+
 /* Table Styling */
 table {
     margin: 20px auto;

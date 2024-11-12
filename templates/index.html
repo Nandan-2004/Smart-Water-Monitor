@@ -13,7 +13,7 @@
         <p><strong>Timestamp:</strong> <span id="timestamp">Waiting for data...</span></p>
         <p><strong>Flow Rate (L/min):</strong> <span id="flow-rate">Waiting for data...</span></p>
     </div>
-    
+
     <div>
         <h3>Recent Readings</h3>
         <table id="data-table" border="1">
@@ -24,11 +24,21 @@
         </table>
     </div>
 
+    <!-- New Dashboard for Penalty and Reward -->
+    <div id="penalty-reward-dashboard">
+        <h3>Water Usage Feedback</h3>
+        <p><strong>Usage Status:</strong> <span id="usage-status">Waiting for data...</span></p>
+        <p><strong>Fine (if over usage):</strong> <span id="fine">0</span> Rs/L</p>
+        <p><strong>Reward (if low usage):</strong> <span id="reward">0</span> L</p>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Define water usage thresholds
             const highUsageThreshold = 80.0;  // Set the high usage threshold
             const lowUsageThreshold = 10.0;   // Set the low usage threshold
+            const fineRate = 5.0;  // Fine rate per liter for excessive use
+            const rewardAmount = 2;  // Reward for low usage, extra water in Liters
 
             // Function to fetch data from the server
             async function fetchData() {
@@ -54,19 +64,30 @@
                     timestampCell.textContent = data.timestamp;
                     flowRateCell.textContent = `${data.flow_rate} L/min`;
 
-                    // Check for high or low water usage
+                    // Check for high or low water usage and update penalty/reward
                     if (data.flow_rate > highUsageThreshold) {
-                        alert("High Water Usage Alert - Your usage is too high! Current flow rate is " + data.flow_rate + " L/min");
+                        document.getElementById('usage-status').textContent = "High Usage - Fine Applied";
+                        const fine = (data.flow_rate - highUsageThreshold) * fineRate;
+                        document.getElementById('fine').textContent = fine.toFixed(2);
+                        document.getElementById('reward').textContent = '0';
                     } else if (data.flow_rate < lowUsageThreshold) {
-                        alert("Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is " + data.flow_rate + " L/min");
+                        document.getElementById('usage-status').textContent = "Low Usage - Reward Applied";
+                        const reward = rewardAmount;
+                        document.getElementById('reward').textContent = reward;
+                        document.getElementById('fine').textContent = '0';
+                    } else {
+                        document.getElementById('usage-status').textContent = "Normal Usage";
+                        document.getElementById('fine').textContent = '0';
+                        document.getElementById('reward').textContent = '0';
                     }
+
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }
             }
 
-            // Poll for data every 5 seconds
-            setInterval(fetchData, 5000);
+            // Poll for data every 60 seconds
+            setInterval(fetchData, 60000);
             fetchData(); // Fetch data immediately on page load
         });
     </script>

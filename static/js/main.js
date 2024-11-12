@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let fine = 0;
     let reward = 0;
 
-    // Track the current month to reset fine and reward at the start of each month
+    // Get the current month at page load
     let currentMonth = new Date().getMonth(); // Get the current month (0-based index)
 
     // Function to reset fine and reward at the start of a new month
     function resetMonthlyValues() {
-        const newMonth = new Date().getMonth();
+        const newMonth = new Date().getMonth(); // Get the new current month
         if (newMonth !== currentMonth) {
             fine = 0;
             reward = 0;

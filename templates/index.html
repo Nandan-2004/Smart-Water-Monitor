@@ -3,59 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Water Monitor</title>
+    <title>Simulated Water Flow Monitor</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Smart Water Monitor</h1>
+    <h1>Simulated Water Flow Monitor</h1>
+    <div id="data-display">
+        <h3>Latest Water Flow Data</h3>
+        <p><strong>Timestamp:</strong> <span id="timestamp">Waiting for data...</span></p>
+        <p><strong>Flow Rate (L/min):</strong> <span id="flow-rate">Waiting for data...</span></p>
+    </div>
     
-    <div id="flowData">
-        <p>Flow Rate: <span id="flowRate">-</span> L/min</p>
-        <p>Total Flow: <span id="totalFlow">-</span> L</p>
-        <p>Timestamp: <span id="timestamp">-</span></p>
-        <p>Fine: <span id="fine">-</span></p>
-        <p>Reward: <span id="reward">-</span></p>
+    <div>
+        <h3>Recent Readings</h3>
+        <table id="data-table" border="1">
+            <tr>
+                <th>Timestamp</th>
+                <th>Flow Rate (L/min)</th>
+            </tr>
+        </table>
     </div>
 
-    <button id="fetchDataBtn">Fetch Latest Data</button>
+    <div id="penalty-reward-dashboard">
+        <h3>Penalty and Reward Dashboard</h3>
+        <p><strong>Fine (if over usage):</strong> <span id="fine">0</span> Rs</p>
+        <p><strong>Reward (if low usage):</strong> <span id="reward">0</span> L</p>
+        <p><strong>Wallet Balance:</strong> <span id="wallet">Rs 0 Fine, 0 L Reward</span></p>
+    </div>
 
     <script>
-        // Function to fetch latest data from the server
-        async function fetchData() {
-            try {
-                const response = await fetch('https://smart-water-monitor-d3qqgqbcy-nandan-javagals-projects.vercel.app/get_data');
-                
-                if (!response.ok) {
-                    throw new Error('Error fetching data');
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define water usage thresholds
+            const highUsageThreshold = 80.0;  // Set the high usage threshold
+            const lowUsageThreshold = 10.0;   // Set the low usage threshold
 
-                const data = await response.json();
+            // Initialize the virtual wallet to store the total fine and reward
+            let totalFine = 0;
+            let totalReward = 0;
 
-                // Check if necessary data fields are present
-                if (data.flow_rate !== undefined && data.timestamp !== undefined) {
-                    document.getElementById('flowRate').textContent = `${data.flow_rate} L/min`;
-                    document.getElementById('timestamp').textContent = data.timestamp;
-                    document.getElementById('fine').textContent = data.fine ? data.fine.toFixed(2) : '-';
-                    document.getElementById('reward').textContent = data.reward ? data.reward.toFixed(2) : '-';
-                    
-                    // Optional: Display total flow if returned from the backend
-                    if (data.totalFlow !== undefined) {
-                        document.getElementById('totalFlow').textContent = `${data.totalFlow} L`;
-                    } else {
-                        document.getElementById('totalFlow').textContent = '-';
-                    }
-                } else {
-                    alert('Invalid data received from the server');
+            // Get the current month and year at page load
+            let currentMonth = new Date().getMonth(); // Get the current month (0-based index)
+            let currentYear = new Date().getFullYear(); // Get the current year
+            let firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // Get the first day of the current month
+
+            // Function to reset fine and reward at the start of a new month
+            function resetMonthlyValues() {
+                const today = new Date(); // Get today's date
+                const firstDayOfNextMonth = new Date(currentYear, currentMonth + 1, 1); // Calculate the first day of next month
+
+                // If today's date is after the first day of next month, reset values
+                if (today >= firstDayOfNextMonth) {
+                    totalFine = 0;
+                    totalReward = 0;
+                    // Update the current month and year
+                    currentMonth = today.getMonth();
+                    currentYear = today.getFullYear();
+                    firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // Update the first day of the current month
+                    console.log("New month started! Wallet values reset.");
                 }
-            } catch (error) {
-                alert('Error fetching data: ' + error.message);
             }
-        }
 
-        // Trigger fetchData on button click
-        document.getElementById('fetchDataBtn').addEventListener('click', fetchData);
+            // Function to fetch data from the server
+            async function fetchData() {
+                try {
+                    // Reset monthly fine and reward values if it's a new month
+                    resetMonthlyValues();
 
-        // Optionally, fetch data automatically every 5 seconds
-        // setInterval(fetchData, 5000); // Uncomment if needed
+                    const response = await fetch('/get_data');
+                    const data = await response.json();
+
+                    console.log("Received data:", data);  // Log for debugging
+
+                    // Update the live flow rate display
+                    document.getElementById('flow-rate').textContent = ${data.flow_rate} L/min;
+
+                    // Update the timestamp
+                    document.getElementById('timestamp').textContent = data.timestamp;
+
+                    // Add a new row to the recent readings table
+                    const table = document.getElementById('data-table');
+                    const newRow = table.insertRow(1); // Insert at the top, below headers
+                    const timestampCell = newRow.insertCell(0);
+                    const flowRateCell = newRow.insertCell(1);
+
+                    // Populate cells with data
+                    timestampCell.textContent = data.timestamp;
+                    flowRateCell.textContent = ${data.flow_rate} L/min;
+
+                    // Check for high or low water usage and update fine and reward
+                    if (data.flow_rate > highUsageThreshold) {
+                        alert(High Water Usage Alert - Your usage is too high! Current flow rate is ${data.flow_rate} L/min);
+                        const fineAmount = (data.flow_rate - highUsageThreshold) * 2; // Example fine calculation
+                        totalFine += fineAmount; // Add the fine to the wallet
+                    } else if (data.flow_rate < lowUsageThreshold) {
+                        alert(Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is ${data.flow_rate} L/min);
+                        const rewardAmount = (lowUsageThreshold - data.flow_rate) * 3; // Example reward calculation
+                        totalReward += rewardAmount; // Add the reward to the wallet
+                    }
+
+                    // Update the fine and reward values in the display
+                    document.getElementById('fine').textContent = totalFine.toFixed(2); // Display total fine
+                    document.getElementById('reward').textContent = totalReward.toFixed(2); // Display total reward
+
+                    // Display the total wallet balance
+                    document.getElementById('wallet').textContent = Wallet Balance: Rs ${totalFine.toFixed(2)} Fine, ${totalReward.toFixed(2)} L Reward;
+
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            }
+
+            // Poll for data every 5 seconds
+            setInterval(fetchData, 5000);
+            fetchData(); // Fetch data immediately on page load
+        });
     </script>
 </body>
 </html>

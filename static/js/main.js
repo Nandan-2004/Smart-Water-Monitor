@@ -15,15 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to reset fine and reward at the start of a new month
     function resetMonthlyValues() {
         const today = new Date();
-
+        
         // Check if today is the first day of the new month
-        if (today.getDate() === 1 && (today.getMonth() !== currentMonth || today.getFullYear() !== currentYear)) {
+        if (today.getDate() === 1) {
             totalFine = 0;
             totalReward = 0;
             // Update the current month and year
             currentMonth = today.getMonth();
             currentYear = today.getFullYear();
-            firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1); // Update the first day of the current month
+            firstDayOfCurrentMonth = new Date(currentYear, currentMonth, 1);
             console.log("New month started! Wallet values reset.");
         }
     }

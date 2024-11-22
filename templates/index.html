@@ -21,21 +21,41 @@
     <script>
         // Function to fetch latest data from the server
         async function fetchData() {
-            const response = await fetch('https://smart-water-monitor-d3qqgqbcy-nandan-javagals-projects.vercel.app/get_data');
-            if (response.ok) {
+            try {
+                const response = await fetch('https://smart-water-monitor-d3qqgqbcy-nandan-javagals-projects.vercel.app/get_data');
+                
+                if (!response.ok) {
+                    throw new Error('Error fetching data');
+                }
+
                 const data = await response.json();
-                document.getElementById('flowRate').textContent = data.flow_rate;
-                document.getElementById('totalFlow').textContent = data.totalFlow;
-                document.getElementById('timestamp').textContent = data.timestamp;
-                document.getElementById('fine').textContent = data.fine;
-                document.getElementById('reward').textContent = data.reward;
-            } else {
-                alert('No data available or error fetching data');
+
+                // Check if necessary data fields are present
+                if (data.flow_rate !== undefined && data.timestamp !== undefined) {
+                    document.getElementById('flowRate').textContent = `${data.flow_rate} L/min`;
+                    document.getElementById('timestamp').textContent = data.timestamp;
+                    document.getElementById('fine').textContent = data.fine ? data.fine.toFixed(2) : '-';
+                    document.getElementById('reward').textContent = data.reward ? data.reward.toFixed(2) : '-';
+                    
+                    // Optional: Display total flow if returned from the backend
+                    if (data.totalFlow !== undefined) {
+                        document.getElementById('totalFlow').textContent = `${data.totalFlow} L`;
+                    } else {
+                        document.getElementById('totalFlow').textContent = '-';
+                    }
+                } else {
+                    alert('Invalid data received from the server');
+                }
+            } catch (error) {
+                alert('Error fetching data: ' + error.message);
             }
         }
 
         // Trigger fetchData on button click
         document.getElementById('fetchDataBtn').addEventListener('click', fetchData);
+
+        // Optionally, fetch data automatically every 5 seconds
+        // setInterval(fetchData, 5000); // Uncomment if needed
     </script>
 </body>
 </html>

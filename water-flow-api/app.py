@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, render_template
 import random
 from datetime import datetime
@@ -23,7 +24,7 @@ def get_data():
     reward = 0
     
     if flow_rate > high_usage_threshold:
-        fine = round((flow_rate - high_usage_threshold) * 10, 2)  # Example fine calculation
+        fine = round((flow_rate - high_usage_threshold) * 2, 2)  # Example fine calculation
     elif flow_rate < low_usage_threshold:
         reward = round(low_usage_threshold - flow_rate, 2)  # Example reward calculation
     

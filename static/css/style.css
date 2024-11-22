@@ -86,3 +86,26 @@ tr:hover {
         padding: 5px;
     }
 }
+
+/* Notification Styling */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 300px;
+    text-align: center;
+    color: #fff;
+    z-index: 1000;
+}
+
+.notification.success {
+    background-color: #2ecc71; /* Green for success */
+}
+
+.notification.error {
+    background-color: #e74c3c; /* Red for error */
+}

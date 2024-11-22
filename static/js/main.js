@@ -15,10 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to reset fine and reward at the start of a new month
     function resetMonthlyValues() {
         const today = new Date();
-        const firstDayOfNextMonth = new Date(currentYear, currentMonth + 1, 1); // First day of next month
 
-        // If today is the first day of a new month, reset the fine and reward values
-        if (today >= firstDayOfNextMonth) {
+        // Check if today is the first day of the new month
+        if (today.getDate() === 1 && (today.getMonth() !== currentMonth || today.getFullYear() !== currentYear)) {
             totalFine = 0;
             totalReward = 0;
             // Update the current month and year

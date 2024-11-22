@@ -58,10 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check for high or low water usage and update fine and reward
             if (data.flow_rate > highUsageThreshold) {
                 alert(`High Water Usage Alert - Your usage is too high! Current flow rate is ${data.flow_rate} L/min`);
+
                 const fineAmount = (data.flow_rate - highUsageThreshold) * 10;  // Example fine calculation
                 totalFine += fineAmount;  // Add the fine to the wallet
             } else if (data.flow_rate < lowUsageThreshold) {
                 alert(`Low Water Usage Alert - Your usage is too low! Keep it up! Current flow rate is ${data.flow_rate} L/min`);
+
                 const rewardAmount = (lowUsageThreshold - data.flow_rate) * 5;  // Example reward calculation
                 totalReward += rewardAmount;  // Add the reward to the wallet
             }
@@ -71,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('reward').textContent = totalReward.toFixed(2);  // Display total reward
 
             // Display the total wallet balance
-            document.getElementById('wallet').textContent = `Wallet Balance: Rs ${totalFine.toFixed(2)} Fine, ${totalReward.toFixed(2)} Reward`;
+            document.getElementById('wallet').textContent = `Wallet Balance: Rs ${totalFine.toFixed(2)} Fine, ${totalReward.toFixed(2)} L Reward`;
+
 
         } catch (error) {
             console.error("Error fetching data:", error);

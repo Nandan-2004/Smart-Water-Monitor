@@ -15,7 +15,7 @@ def index():
 def get_data():
     try:
         # Fetch data from the ESP32
-        response = requests.get(ESP32_URL, timeout=5)  # Adjust timeout as needed
+        response = requests.get(192.168.107.97,timeout=5)  # Adjust timeout as needed
         response.raise_for_status()  # Raise exception for HTTP errors
         
         esp_data = response.json()  # Assuming ESP32 sends JSON data

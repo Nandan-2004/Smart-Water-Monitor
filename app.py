@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import requests  # To fetch data from ESP32
 from datetime import datetime
 
+# Initialize the Flask app
 app = Flask(__name__)
 
 # ESP32 endpoint URL (replace with the correct IP or hostname of the ESP32 device)
@@ -15,29 +16,22 @@ def index():
 def get_data():
     try:
         # Fetch data from the ESP32
-        response = requests.get(192.168.107.97,timeout=5)  # Adjust timeout as needed
+        response = requests.get(ESP32_URL, timeout=5)
         response.raise_for_status()  # Raise exception for HTTP errors
-        
-        esp_data = response.json()  # Assuming ESP32 sends JSON data
 
-        # Extract data from ESP32 response
-        flow_rate = esp_data.get('flow_rate', 0)  # Replace 'flow_rate' with the correct key
+        esp_data = response.json()  # Assuming ESP32 sends JSON data
+        flow_rate = float(esp_data.get('flow_rate', 0))  # Replace with actual key
         timestamp = esp_data.get('timestamp', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-        # Define usage thresholds for fine and reward
-        high_usage_threshold = 15  # Example threshold
+        # Usage thresholds
+        high_usage_threshold = 15
         low_usage_threshold = 2
 
-        # Fine and reward logic
-        fine = 0
-        reward = 0
+        # Calculate fine and reward
+        fine = round(max(0, (flow_rate - high_usage_threshold) * 2), 2)
+        reward = round(max(0, (low_usage_threshold - flow_rate) * 3), 2)
 
-        if flow_rate > high_usage_threshold:
-            fine = round((flow_rate - high_usage_threshold) * 2, 2)  # Example fine calculation
-        elif flow_rate < low_usage_threshold:
-            reward = round(low_usage_threshold - flow_rate, 2)  # Example reward calculation
-
-        # Prepare the response data
+        # Response data
         data = {
             'timestamp': timestamp,
             'flow_rate': flow_rate,
@@ -46,7 +40,7 @@ def get_data():
         }
 
     except (requests.RequestException, ValueError) as e:
-        # Handle exceptions (e.g., ESP32 not reachable, invalid JSON)
+        # Handle exceptions
         data = {
             'error': str(e),
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

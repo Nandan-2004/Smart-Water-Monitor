@@ -1,105 +1,123 @@
-/* Basic Styling */
+/* Global styles */
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
+    background: linear-gradient(to right, #00bfff, #1e90ff);
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
-    color: #0077cc;
+    text-align: center;
+    margin-top: 50px;
+    color: #333;
+}
+h3 {
+    text-align: center;
+}
+#data-display, #penalty-reward-dashboard {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#data-display h3, #penalty-reward-dashboard h3 {
+    text-align: center;
+    font-size: 24px;
     margin-bottom: 20px;
 }
 
-#flow-rate {
-    font-size: 2em;
-    color: #333;
+#data-display p, #penalty-reward-dashboard p {
+    font-size: 18px;
+    margin-bottom: 10px;
 }
 
-/* Data Display Section Styling */
-#data-display {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 20px auto;
-    width: 80%;
-    max-width: 400px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-
-/* New Dashboard Styling */
-#penalty-reward-dashboard {
-    margin-top: 30px;
-    border: 1px solid #ddd;
-    padding: 15px;
-    width: 80%;
-    max-width: 400px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-
-#penalty-reward-dashboard h3 {
-    color: #0077cc;
-}
-
-/* Fine and Reward Visual Styling */
-#fine {
-    color: #e74c3c;  /* Red for fine */
-    font-weight: bold;
-}
-
-#reward {
-    color: #2ecc71;  /* Green for reward */
-    font-weight: bold;
-}
-
-/* Table Styling */
 table {
-    margin: 20px auto;
-    border-collapse: collapse;
     width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-table, th, td {
-    border: 1px solid #0077cc;
-    padding: 10px;
-    text-align: center;
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
-th {
-    background-color: #0077cc;
-    color: white;
+table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
 }
 
-/* Hover Effect for Table Rows */
-tr:hover {
-    background-color: #e0f0ff; /* Light blue background on hover */
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-/* Responsive Design for Smaller Screens */
-@media (max-width: 600px) {
-    body {
-        font-size: 14px;
-    }
-    #flow-rate {
-        font-size: 1.5em;
-    }
-    table, th, td {
-        padding: 5px;
-    }
-}
-
-/* Notification Styling */
+/* Notification styles */
 .notification {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 14px;
-    width: 300px;
-    text-align: center;
     color: #fff;
     z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(-10px);
+}
+
+.notification.success {
+    background-color: #2ecc71;
+}
+
+.notification.error {
+    background-color: #e74c3c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #data-display, #penalty-reward-dashboard {
+        width: 95%;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+}.notification {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #fff;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(-10px); /* Slide-in effect */
 }
 
 .notification.success {

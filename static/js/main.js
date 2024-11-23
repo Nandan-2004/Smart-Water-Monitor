@@ -1,38 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Function to fetch data from the Flask server
-    async function fetchData() {
-        try {
-            // Fetch the data from the Flask endpoint
-            const response = await fetch('/get_data');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+function showNotification(message, type, duration = 3000, position = 'bottom') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
 
-            // Parse the JSON response
-            const data = await response.json();
+    // Set ARIA attributes for accessibility
+    notification.setAttribute('role', 'alert');
+    notification.setAttribute('aria-live', 'assertive');
 
-            if (data.error) {
-                console.error("Error from server:", data.error);
-                return;
-            }
+    // Append to body or a specific container
+    document.body.appendChild(notification);
 
-            // Update the DOM with new data
-            document.getElementById('timestamp').textContent = data.timestamp || "N/A";
-            document.getElementById('flow-rate').textContent = `${data.flow_rate || 0} L/min`;
-            document.getElementById('fine').textContent = `${data.fine || 0} Rs`;
-            document.getElementById('reward').textContent = `${data.reward || 0} L`;
-
-            // Add new data to the Recent Readings table
-            const table = document.getElementById('data-table');
-            const newRow = table.insertRow(1); // Insert at the top (after the header row)
-            newRow.insertCell(0).textContent = data.timestamp || "N/A";
-            newRow.insertCell(1).textContent = `${data.flow_rate || 0} L/min`;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+    // Positioning logic
+    notification.style.position = 'fixed';
+    if (position === 'top') {
+        notification.style.top = '20px';
+    } else if (position === 'bottom') {
+        notification.style.bottom = '20px';
     }
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
 
-    // Call fetchData initially and every 5 seconds
-    setInterval(fetchData, 5000);
-    fetchData(); // Immediate call to populate data on page load
-});
+    // Show the notification with animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);  // Adding delay to ensure that CSS transition works
+
+    // Hide and remove the notification after the specified duration
+    setTimeout(() => {
+        // Remove the 'show' class after the duration
+        notification.classList.remove('show');
+
+        // Remove the notification completely after fade-out animation (300ms delay for fade effect)
+        setTimeout(() => {
+            notification.remove();
+        }, 300);  // This delay should match the CSS transition time
+    }, duration);  // This duration controls how long the notification stays visible
+}
+
+// Example Usage
+showNotification("High water usage alert!", "error", 5000, "top");
+showNotification("Reward earned for low usage!", "success", 3000, "bottom");
